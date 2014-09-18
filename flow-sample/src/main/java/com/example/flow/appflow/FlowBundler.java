@@ -4,36 +4,33 @@ import android.os.Bundle;
 import flow.Backstack;
 import flow.Flow;
 import flow.Parcer;
+import javax.annotation.Nullable;
 
 import static com.example.flow.util.Preconditions.checkArgument;
 
 /**
  * Handles Bundle persistence of a Flow.
  */
-public class FlowBundler {
+public abstract class FlowBundler {
   private static final String FLOW_KEY = "flow_key";
 
-  private final Object defaultScreen;
   private final Flow.Listener listener;
   private final Parcer<Object> parcer;
 
   private Flow flow;
 
-  public FlowBundler(Object defaultScreen, Flow.Listener listener, Parcer<Object> parcer) {
+  public FlowBundler(Flow.Listener listener, Parcer<Object> parcer) {
     this.listener = listener;
-    this.defaultScreen = defaultScreen;
     this.parcer = parcer;
   }
 
   public AppFlow onCreate(Bundle savedInstanceState) {
     checkArgument(flow == null, "Flow already created.");
-    Backstack backstack;
+    Backstack restoredBackstack = null;
     if (savedInstanceState != null && savedInstanceState.containsKey(FLOW_KEY)) {
-      backstack = Backstack.from(savedInstanceState.getParcelable(FLOW_KEY), parcer);
-    } else {
-      backstack = Backstack.fromUpChain(defaultScreen);
+      restoredBackstack = Backstack.from(savedInstanceState.getParcelable(FLOW_KEY), parcer);
     }
-    flow = new Flow(backstack, listener);
+    flow = new Flow(getColdStartBackstack(restoredBackstack), listener);
     return new AppFlow(flow);
   }
 
@@ -58,5 +55,6 @@ public class FlowBundler {
   protected Backstack getBackstackToSave(Backstack backstack) {
     return backstack;
   }
-}
 
+  protected abstract Backstack getColdStartBackstack(@Nullable Backstack restoredBackstack);
+}
