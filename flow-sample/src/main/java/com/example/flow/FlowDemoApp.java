@@ -19,7 +19,7 @@ package com.example.flow;
 import android.app.Application;
 import dagger.ObjectGraph;
 
-public class DemoApp extends Application {
+public class FlowDemoApp extends Application {
   private ObjectGraph globalGraph;
 
   @Override public void onCreate() {

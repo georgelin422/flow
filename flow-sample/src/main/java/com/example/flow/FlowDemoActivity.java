@@ -34,13 +34,13 @@ import flow.HasParent;
 
 import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 
-public class MainActivity extends Activity implements Flow.Listener {
+public class FlowDemoActivity extends Activity implements Flow.Listener {
   /**
    * Persists the {@link Flow} in the bundle. Initialized with the home screen,
    * {@link Screens.ConversationList}.
    */
   private final FlowBundler flowBundler =
-      new FlowBundler(new Screens.ConversationList(), MainActivity.this,
+      new FlowBundler(new Screens.ConversationList(), FlowDemoActivity.this,
           new GsonParcer<>(new Gson()));
 
   @InjectView(R.id.container) FrameScreenSwitcherView container;
@@ -76,7 +76,7 @@ public class MainActivity extends Activity implements Flow.Listener {
         .setShowAsActionFlags(SHOW_AS_ACTION_ALWAYS)
         .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
           @Override public boolean onMenuItemClick(MenuItem menuItem) {
-            AppFlow.get(MainActivity.this).goTo(new Screens.FriendList());
+            AppFlow.get(FlowDemoActivity.this).goTo(new Screens.FriendList());
             return true;
           }
         });

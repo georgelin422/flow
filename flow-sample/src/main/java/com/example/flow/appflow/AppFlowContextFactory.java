@@ -37,9 +37,9 @@ public final class AppFlowContextFactory implements ScreenContextFactory {
     return AppFlow.setScreen(parentContext, screen);
   }
 
-  @Override public void destroyContext(Context context) {
+  @Override public void destroyContext(Context context, Context parentContext) {
     if (delegate != null) {
-      delegate.destroyContext(context);
+      delegate.destroyContext(context, parentContext);
     }
   }
 }

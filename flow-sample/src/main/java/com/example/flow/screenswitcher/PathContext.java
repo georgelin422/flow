@@ -33,8 +33,9 @@ public class PathContext extends ContextWrapper {
   private static final String SERVICE_NAME = "PATH_CONTEXT";
   private static final List<Screen> EMPTY_PATH = Collections.emptyList();
   private static final Map<String, Context> EMPTY_CONTEXT_MAP = Collections.emptyMap();
-  private final List<Screen> path;
+
   private final Map<String, Context> contexts;
+  private final List<Screen> path;
 
   PathContext(Context leafContext, List<Screen> path, Map<String, Context> contexts) {
     super(leafContext);
@@ -89,12 +90,15 @@ public class PathContext extends ContextWrapper {
   public void destroyNotIn(PathContext path, ScreenContextFactory factory) {
     Iterator<Screen> aPath = this.path.iterator();
     Iterator<Screen> bPath = path.path.iterator();
+    Context parentContext = getBaseContext();
     while (aPath.hasNext() && bPath.hasNext()) {
       String aScreen = aPath.next().getName();
       String bScreen = bPath.next().getName();
       if (!aScreen.equals(bScreen)) {
-        factory.destroyContext(contexts.get(aScreen));
+        factory.destroyContext(contexts.get(aScreen), parentContext);
         break;
+      } else {
+        parentContext = contexts.get(aScreen);
       }
     }
   }

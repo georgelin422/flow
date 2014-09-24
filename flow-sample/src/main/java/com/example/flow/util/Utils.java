@@ -19,11 +19,11 @@ package com.example.flow.util;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import com.example.flow.DemoApp;
+import com.example.flow.FlowDemoApp;
 
 public final class Utils {
   public static void inject(Context context, Object thing) {
-    ((DemoApp) context.getApplicationContext()).getGlobalGraph().inject(thing);
+    ((FlowDemoApp) context.getApplicationContext()).getGlobalGraph().inject(thing);
   }
 
   public interface OnMeasuredCallback {

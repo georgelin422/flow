@@ -87,9 +87,7 @@ public class SimpleSwitcher extends ScreenSwitcher {
     if (fromView == null || direction == REPLACE) {
       container.removeAllViews();
       container.addView(view);
-      tag.toScreen.restoreHierarchyState(container.getChildAt(0));
-      oldPath.destroyNotIn(context, contextFactory);
-      callback.onComplete();
+      onTransitionComplete(container, callback, tag, context, oldPath);
     } else {
       container.addView(view);
       final View finalFromView = fromView;
@@ -98,9 +96,7 @@ public class SimpleSwitcher extends ScreenSwitcher {
           runAnimation(container, finalFromView, view, direction, new Flow.Callback() {
             @Override public void onComplete() {
               container.removeView(finalFromView);
-              tag.toScreen.restoreHierarchyState(container.getChildAt(0));
-              oldPath.destroyNotIn(context, contextFactory);
-              callback.onComplete();
+              onTransitionComplete(container, callback, tag, context, oldPath);
             }
           });
         }
@@ -131,5 +127,12 @@ public class SimpleSwitcher extends ScreenSwitcher {
     set.play(ObjectAnimator.ofFloat(to, View.TRANSLATION_X, toTranslation, 0));
 
     return set;
+  }
+
+  private void onTransitionComplete(ViewGroup container, Flow.Callback callback, Tag tag,
+      PathContext context, PathContext oldPath) {
+    tag.toScreen.restoreHierarchyState(container.getChildAt(0));
+    oldPath.destroyNotIn(context, contextFactory);
+    callback.onComplete();
   }
 }
