@@ -22,7 +22,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.example.flow.pathview.HandlesBack;
-import com.example.flow.util.FlowBundler;
+import com.google.gson.Gson;
+import flow.ActivityFlowSupport;
+import flow.Backstack;
 import flow.Flow;
 import flow.HasParent;
 import flow.Path;
@@ -36,7 +38,7 @@ public class MainActivity extends Activity implements Flow.Dispatcher {
   private PathContainerView container;
   private HandlesBack containerAsBackTarget;
 
-  private Flow flow;
+  private final ActivityFlowSupport flowSupport = new ActivityFlowSupport();
 
   /**
    * Pay attention to the {@link #setContentView} call here. It's creating a responsive layout
@@ -58,7 +60,11 @@ public class MainActivity extends Activity implements Flow.Dispatcher {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    flow = getFlowBundler().onCreate(savedInstanceState);
+    GsonParceler parceler = new GsonParceler(new Gson());
+    Backstack defaultBackstack = Backstack.single(new Paths.ConversationList());
+    ActivityFlowSupport.NonConfigurationInstance nonConfig =
+        (ActivityFlowSupport.NonConfigurationInstance) getLastNonConfigurationInstance();
+    flowSupport.onCreate(nonConfig, savedInstanceState, parceler, defaultBackstack);
 
     final ActionBar actionBar = getActionBar();
     actionBar.setDisplayShowHomeEnabled(false);
@@ -69,24 +75,30 @@ public class MainActivity extends Activity implements Flow.Dispatcher {
     containerAsBackTarget = (HandlesBack) container;
   }
 
+  @Override public Object onRetainNonConfigurationInstance() {
+    return flowSupport.onRetainNonConfigurationInstance();
+  }
+
   @Override protected void onResume() {
     super.onResume();
-    flow.setDispatcher(this);
+    flowSupport.onResume(this);
   }
 
   @Override protected void onPause() {
-    flow.removeDispatcher(this);
+    flowSupport.onPause();
     super.onPause();
   }
 
+
+
   @Override public Object getSystemService(String name) {
-    if (Flow.isFlowSystemService(name)) return flow;
-    return super.getSystemService(name);
+    Object service = flowSupport.getSystemService(name);
+    return service != null ? service : super.getSystemService(name);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    getFlowBundler().onSaveInstanceState(outState);
+    flowSupport.onSaveInstanceState(outState);
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,9 +128,9 @@ public class MainActivity extends Activity implements Flow.Dispatcher {
   }
 
   @Override public void onBackPressed() {
-    if (!containerAsBackTarget.onBackPressed()) {
-      super.onBackPressed();
-    }
+    if (containerAsBackTarget.onBackPressed()) return;
+    if (flowSupport.onBackPressed()) return;
+    super.onBackPressed();
   }
 
   @Override public void dispatch(Traversal traversal, final TraversalCallback callback) {
@@ -136,7 +148,4 @@ public class MainActivity extends Activity implements Flow.Dispatcher {
     });
   }
 
-  private FlowBundler getFlowBundler() {
-    return ((DemoApp) getApplication()).getFlowBundler();
-  }
 }
