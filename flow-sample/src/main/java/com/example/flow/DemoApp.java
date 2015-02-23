@@ -17,11 +17,11 @@
 package com.example.flow;
 
 import android.app.Application;
+import android.support.annotation.Nullable;
 import com.example.flow.util.FlowBundler;
 import com.google.gson.Gson;
 import dagger.ObjectGraph;
 import flow.Backstack;
-import javax.annotation.Nullable;
 
 public class DemoApp extends Application {
   private final FlowBundler flowBundler = new FlowBundler(new GsonParceler(new Gson())) {

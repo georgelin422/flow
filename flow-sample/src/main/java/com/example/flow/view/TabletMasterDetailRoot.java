@@ -14,7 +14,6 @@ import com.example.flow.pathview.UpAndBack;
 import flow.Flow;
 import flow.Path;
 import flow.PathContainerView;
-import javax.annotation.Nonnull;
 
 /**
  * This view is shown only in landscape orientation on tablets. See
@@ -31,7 +30,7 @@ public class TabletMasterDetailRoot extends LinearLayout
     super(context, attrs);
   }
 
-  @Override public boolean dispatchTouchEvent(@Nonnull MotionEvent ev) {
+  @Override public boolean dispatchTouchEvent(MotionEvent ev) {
     return !disabled && super.dispatchTouchEvent(ev);
   }
 

@@ -17,10 +17,10 @@
 package com.example.flow.util;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import flow.Backstack;
 import flow.Flow;
 import flow.Parceler;
-import javax.annotation.Nullable;
 
 /**
  * Handles Bundle persistence of a Flow.
